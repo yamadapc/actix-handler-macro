@@ -2,7 +2,6 @@
 name = "actix-handler-macro"
 description = "Helper macros for using Actix. Generates handlers, actors and address traits."
 license = "MIT"
-license-file = "LICENSE"
 version = "0.1.0"
 authors = ["Pedro Tacla Yamada <tacla.yamada@gmail.com>"]
 edition = "2018"
@@ -16,8 +15,8 @@ syn = { version = "1", features = ["full"] }
 proc-macro2 = "1"
 
 [dev-dependencies]
-actix = { version = "*" }
-actix_derive = { version = "*" }
+actix = { version = "0.10" }
+actix_derive = { version = "0.5" }
 criterion = "0.3"
 
 [[bench]]
