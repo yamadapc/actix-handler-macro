@@ -33,11 +33,8 @@ pub fn parse_options(args: AttributeArgs) -> Options {
                 },
                 Meta::NameValue(name_value) => {
                     if let "trait_name" = name_value.path.to_token_stream().to_string().as_str() {
-                        match name_value.lit {
-                            Lit::Str(trait_name) => {
-                                options.trait_name = Some(trait_name.value());
-                            }
-                            _ => {}
+                        if let Lit::Str(trait_name) = name_value.lit {
+                            options.trait_name = Some(trait_name.value());
                         }
                     }
                 }
