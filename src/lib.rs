@@ -2,11 +2,24 @@
 //! Helper macros for using Actix.
 //!
 //! ```rust
+//! use actix::Message;
+//! use actix_handler_macro::{actix_handler, Actor};
+//!
+//! #[derive(Actor)]
+//! struct Example;
+//! type ExampleContext = actix::Context<Example>;
+//!
+//! #[derive(Message)]
+//! #[rtype(result = "String")]
+//! struct Greeting {
+//!     name: String,
+//! }
+//!
 //! #[actix_handler]
 //! impl Example {
-//!   fn greet(&self, message: Greeting, _ctx: &ExampleContext) -> String {
-//!     format!("Hello {}", message.name).to_string()
-//!   }
+//!     fn greet(&self, message: Greeting, _ctx: &ExampleContext) -> String {
+//!         format!("Hello {}", message.name).to_string()
+//!     }
 //! }
 //! ```
 mod actor_derive;
@@ -33,11 +46,11 @@ use utils::compilation_error;
 /// use actix::Context;
 /// use actix::Handler;
 /// use actix::Message;
-/// use actix_handler_macro::actix_handler;
 ///
 /// struct Example;
 ///
 /// impl Actor for Example {
+///     type Context = Context<Example>;
 /// }
 ///
 /// #[derive(Message)]
@@ -45,7 +58,7 @@ use utils::compilation_error;
 /// struct Greeting { name: String }
 ///
 /// impl Handler<Greeting> for Example {
-///     type Result = ();
+///     type Result = String;
 ///
 ///     fn handle(&mut self, msg: Greeting, ctx: &mut Context<Self>) -> Self::Result {
 ///         unimplemented!()
@@ -57,7 +70,7 @@ use utils::compilation_error;
 ///
 /// ## Usage
 /// ```rust
-/// use actix_handler_macro::actix_handler;
+/// use actix_handler_macro::{Actor, actix_handler};
 /// use actix::{Actor, Addr, Context, Message, System};
 ///
 ///
@@ -100,10 +113,10 @@ use utils::compilation_error;
 /// It'll also output a trait `GreetingAddr` and its implementation for `Addr<Example>` with
 /// convenience methods:
 ///
-/// ```rust
+/// ```ignore
 /// // Example output
 /// trait GreetingAddr {
-///   fn greet(self: &Self, msg: Greeting) -> actix::Request<Example, Greeting>;
+///     fn greet(self: &Self, msg: Greeting) -> actix::prelude::Request<Example, Greeting>;
 /// }
 /// ```
 ///
@@ -112,32 +125,52 @@ use utils::compilation_error;
 /// Optionally, the trait can use a `actix::Recipient` and return a `actix::RecipientRequest`.
 ///
 /// ```rust
+/// use actix::{Message};
+/// use actix_handler_macro::{actix_handler, Actor};
+///
+/// #[derive(Actor)]
+/// struct Example;
+/// type ExampleContext = actix::Context<Example>;
+/// #[derive(Message)]
+/// #[rtype(result = "String")]
+/// struct Greeting { name: String }
+///
 /// #[actix_handler(use_recipient)]
 /// impl Example {
-///   fn greet(&self, message: Greeting, _ctx: &ExampleContext) -> String {
-///     format!("Hello {}", message.name).to_string()
-///   }
+///     fn greet(&self, message: Greeting, _ctx: &ExampleContext) -> String {
+///         format!("Hello {}", message.name).to_string()
+///     }
 /// }
 /// ```
 ///
 /// `#[actix_handler(use_recipient)]` will expand the `GreetingAddr` trait as:
 ///
-/// ```rust
+/// ```skip
 /// // Example output
 /// trait GreetingAddr {
-///   fn greet(self: &Self, msg: Greeting) -> actix::RecipientRequest<Greeting>;
+///     fn greet(self: &Self, msg: Greeting) -> actix::RecipientRequest<Greeting>;
 /// }
 /// ```
 ///
 /// A mock of the actor could be implemented as:
-/// ```rust
+/// ```skip
+/// use actix::Message;
+/// use actix_handler_macro::Actor;
+///
+/// #[derive(Actor)]
+/// struct Example;
+///
+/// #[derive(Message)]
+/// #[rtype(result = "String")]
+/// struct Greeting;
+///
 /// #[derive(Actor)]
 /// struct ExampleMock {
-///     mocker: actix::Addr<actix::Mocker<Example>>,
+///     mocker: actix::Addr<actix::actors::mocker::Mocker<Example>>,
 /// }
 ///
 /// impl GreetingAddr for ExampleMock {
-///     fn greet(self: &Self, msg: Greeting) -> actix::RecipientRequest<Greeting> {
+///     fn greet(self: &Self, msg: Greeting) -> actix::prelude::RecipientRequest<Greeting> {
 ///         self.mocker.clone().recipient().send(msg)
 ///     }
 /// }

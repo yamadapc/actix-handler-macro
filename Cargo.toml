@@ -1,7 +1,7 @@
 [package]
 name = "actix-handler-macro"
 version = "0.1.0"
-authors = ["yamadapc <tacla.yamada@gmail.com>"]
+authors = ["Pedro Tacla Yamada <tacla.yamada@gmail.com>"]
 edition = "2018"
 
 [lib]
@@ -11,10 +11,6 @@ proc-macro = true
 quote = "1"
 syn = { version = "1", features = ["full"] }
 proc-macro2 = "1"
-
-# [patch.crates-io]
-# actix = { path = "../actix" }
-# actix_derive = { path = "../actix/actix-derive" }
 
 [dev-dependencies]
 actix = { version = "*" }

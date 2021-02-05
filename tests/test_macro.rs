@@ -1,13 +1,10 @@
 use actix::{Actor, Message, System};
 use actix_handler_macro::{actix_handler, Actor};
 
+#[derive(Actor)]
 struct Example;
 
 type ExampleContext = actix::Context<Example>;
-
-impl Actor for Example {
-    type Context = ExampleContext;
-}
 
 #[derive(Message)]
 #[rtype(result = "()")]
