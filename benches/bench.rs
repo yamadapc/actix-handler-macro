@@ -1,5 +1,5 @@
 use actix::{Actor, Addr, Message, MessageResponse, System, SystemRunner};
-use actix_handler_macro::actix_handler;
+use actix_handler_macro::{actix_handler, Actor};
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 
 #[derive(Actor)]
